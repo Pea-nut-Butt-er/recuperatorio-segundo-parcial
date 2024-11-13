@@ -9,63 +9,61 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
 
 public class JugadorService {
-    private TreeMap <String, JSONObject> colores = new TreeMap<>();
-    private TreeMap <String, JSONObject> posiciones = new TreeMap<>();
+    private TreeMap <String,  ArrayList<JSONObject>> colores = new TreeMap<>();
+    private TreeMap <String,  ArrayList<JSONObject>> posiciones = new TreeMap<>();
 
     public JugadorService() {
     }
 
-    public JugadorService(TreeMap<String, JSONObject> colores, TreeMap<String, JSONObject> posiciones) {
+    public JugadorService(TreeMap<String,  ArrayList<JSONObject>> colores, TreeMap<String,  ArrayList<JSONObject>> posiciones) {
         this.colores = colores;
         this.posiciones = posiciones;
     }
 
-    public TreeMap<String, JSONObject> getColores(){
+    public TreeMap<String, ArrayList<JSONObject>> getColores() {
         return colores;
     }
 
-    public void setColores(TreeMap<String, JSONObject> colores) {
+    public void setColores(TreeMap<String, ArrayList<JSONObject>> colores) {
         this.colores = colores;
     }
 
-    public TreeMap<String, JSONObject> getPosiciones() {
+    public TreeMap<String, ArrayList<JSONObject>> getPosiciones() {
         return posiciones;
     }
 
-    public void setPosiciones(TreeMap<String, JSONObject> posiciones) {
+    public void setPosiciones(TreeMap<String, ArrayList<JSONObject>> posiciones) {
         this.posiciones = posiciones;
     }
 
-    @Override
-    public String toString() {
-        return "JugadorService{" +
-                "colores=" + colores +
-                ", posiciones=" + posiciones +
-                '}';
-    }
-
-    public Integer cantElementosColores(String color, Integer max) throws excesoDeJugadoresException {
+    public Integer cantElementosColores(String color, Integer max) throws excesoDeJugadoresException, JSONException {
         Integer i = 0;
-        for(Map.Entry<String, JSONObject> e : colores.entrySet()){
-            if(e.getKey() == color){
-                i++;
+        for(Map.Entry<String,  ArrayList<JSONObject>> e : colores.entrySet()){
+            for (JSONObject j: e.getValue()) {
+                if(j.getString("eyeColor").equals(color)){
+                    i++;
+                }
             }
         }
+        System.out.println(i);
         if(i > max){
             throw new excesoDeJugadoresException("En la coleccion colores hay " + i + " jugadores con color de ojo " + color + " ,esos son " + (i - max) + " de mas");
         }
         return i;
     }
 
-    public Integer cantElementosPosiciones(String posicion, Integer max) throws excesoDeJugadoresException {
+    public Integer cantElementosPosiciones(String posicion, Integer max) throws excesoDeJugadoresException, JSONException {
         Integer i = 0;
-        for(Map.Entry<String, JSONObject> e : posiciones.entrySet()){
-            if(e.getKey() == posicion){
-                i++;
+        for(Map.Entry<String,  ArrayList<JSONObject>> e : posiciones.entrySet()){
+            for (JSONObject j: e.getValue()) {
+                if(j.getString("position").equals(posicion)){
+                    i++;
+                }
             }
         }
         if(i > max){
@@ -76,15 +74,16 @@ public class JugadorService {
 
     public void guardarAdinerados(Double maxBalance) throws JSONException, IOException {
         File file = new File("adinerador.dat");
-
         PrintWriter printWriter = new PrintWriter(new FileWriter(file));
-        for(Map.Entry<String, JSONObject> e : posiciones.entrySet()){
 
-
-            Double balance = Double.parseDouble(e.getValue().getString("balance"));
-            if(balance > maxBalance){
-                printWriter.println(e.getValue().toString());
+        for(Map.Entry<String,  ArrayList<JSONObject>> e : posiciones.entrySet()){
+            for (JSONObject j: e.getValue()) {
+                Double balance = j.getDouble("balance");
+                if (balance > maxBalance) {
+                    printWriter.println(e.getValue().toString());
+                }
             }
         }
+        printWriter.close();
     }
 }

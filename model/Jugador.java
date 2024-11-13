@@ -4,7 +4,7 @@ public class Jugador {
     private String _id;
     private String guid;
     private Boolean isActive;
-    private String balance;
+    private Double balance;
     private Integer age;
     private String eyeColor;
     private Name name;
@@ -15,7 +15,7 @@ public class Jugador {
     public Jugador() {
     }
 
-    public Jugador(String _id, String guid, Boolean isActive, String balance, Integer age, String eyeColor, Name name, String email, String phone, String position) {
+    public Jugador(String _id, String guid, Boolean isActive, Double balance, Integer age, String eyeColor, Name name, String email, String phone, String position) {
         this._id = _id;
         this.guid = guid;
         this.isActive = isActive;
@@ -52,11 +52,11 @@ public class Jugador {
         isActive = active;
     }
 
-    public String getBalance() {
+    public Double getBalance() {
         return balance;
     }
 
-    public void setBalance(String balance) {
+    public void setBalance(Double balance) {
         this.balance = balance;
     }
 
